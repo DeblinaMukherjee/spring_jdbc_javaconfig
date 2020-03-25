@@ -1,11 +1,5 @@
 package com.cognizant.config;
 
-
-
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.util.Properties;
-
 import javax.sql.DataSource;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +17,7 @@ import org.springframework.web.servlet.view.InternalResourceViewResolver;
 @EnableWebMvc
 @Configuration
 @ComponentScan("com.cognizant")
-@PropertySource(value = { "db.properties" })
+@PropertySource("classpath:db.properties")
 public class AppConfig {
 
 	@Bean
@@ -40,29 +34,19 @@ public class AppConfig {
 	private Environment env;
 
 
-	@Bean
+	@Bean("datasource")
 	public DataSource dataSource() {
-		Properties properties = new Properties();
+	
 
-		try {
-
-			FileInputStream fis = new FileInputStream("db.properties");
-			properties.load(fis);
-
-		} catch (IOException e) {
-
-			e.printStackTrace();
-		}
-
-        DriverManagerDataSource ds = new DriverManagerDataSource();
+        DriverManagerDataSource datasource = new DriverManagerDataSource();
 
         //MySQL database we are using
 
-        ds.setDriverClassName(env.getRequiredProperty("DB_DRIVER_CLASS"));
-        ds.setUrl(env.getRequiredProperty("DB_URL"));
-        ds.setUsername(env.getRequiredProperty("DB_USERNAME"));
-        ds.setPassword(env.getRequiredProperty("DB_PASSWORD"));
-        return ds;
+        datasource.setDriverClassName(env.getProperty("DB_DRIVER_CLASS"));
+        datasource.setUrl(env.getProperty("DB_URL"));
+        datasource.setUsername(env.getProperty("DB_USERNAME"));
+        datasource.setPassword(env.getProperty("DB_PASSWORD"));
+        return datasource;
 
 	}
 
